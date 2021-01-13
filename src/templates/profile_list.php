@@ -53,6 +53,7 @@
             <th class="filter-select filter-onlyAvail filter-select-sort-desc sorter-text" data-value="<?= $data['date'] ?>">last snapshot</th>
             <th class="sorter-text filter-label" data-value="<?= $data['label'] ?>">label</th>
             <th class="filter-select filter-onlyAvail sorter-text" data-value="<?= $data['app'] ?>">app</th>
+            <th class="filter-false" style="width: 250px;">Last traces</th>
             <th class="filter-false">calls count
                 <span data-toggle="tooltip"  title="Calls count recorded during specified day" class="glyphicon glyphicon-question-sign"></span>
             </th>
@@ -80,6 +81,17 @@
                 <td><?= $Snapshot->getDate() ?></td>
                 <td><?= $Snapshot->getLabel() ?></td>
                 <td><?= $Snapshot->getApp() ?></td>
+                <td>
+                <?php foreach ($Snapshot->getLastTraces() as $timestamp => $trace) { ?>
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=1&trace=<?= $trace ?>"><?= $timestamp ?></a> (порог
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=10&trace=<?= $trace ?>">10</a>,
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=25&trace=<?= $trace ?>">25</a>,
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=50&trace=<?= $trace ?>">50</a>
+                    )
+                    <br>
+                <?php } ?>
+                </td>
+
                 <td><?= $Snapshot->getCallsCount() ?></td>
                 <?php foreach ($Snapshot->getFormattedValues() as $field => $value) { ?>
                     <td><?= $value ?></td>

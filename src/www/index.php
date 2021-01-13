@@ -191,6 +191,50 @@ switch (getCurrentUri()) {
         echo json_encode($Page->getSourceLabelList($_GET['app']));
         break;
 
+    case '/profiler/trace.phtml':
+        $trace = isset($_GET['trace']) ? (int)$_GET['trace'] : null;
+        $threshold = isset($_GET['threshold']) ? (int)$_GET['threshold'] : 10;
+
+        if ($trace === null) {
+            echo "Details not found";
+            exit();
+        }
+
+        /** @var \Badoo\LiveProfilerUI\DB\Storage $storage */
+        $storage = $App->getSourceStorage();
+        $stmt = $storage->query('
+                select perfdata
+                from details as d
+                where d.id = '. $trace);
+
+        $perfdata = $stmt->fetch()['perfdata'] ?? null;
+
+        if ($perfdata === null) {
+            echo "Perfdata not found";
+            exit();
+        }
+
+        file_put_contents('/tmp/profile.xhprof', $perfdata);
+
+        $command = sprintf(
+            "/app/bin/tk generate-xhprof-graphviz /tmp/profile.xhprof -t %s -o /dev/stdout",
+            $threshold
+        );
+
+        $data = shell_exec($command);
+
+        if (empty($data)) {
+            echo "Convert trace fail";
+            exit();
+        }
+
+        $data = rawurlencode($data);
+
+        $url = "http://dreampuf.github.io/GraphvizOnline/#". $data;
+
+        header('Location: ' . $url);
+        return;
+
     case '/profiler/result-list.phtml':
     default:
         $data = [
@@ -205,4 +249,9 @@ switch (getCurrentUri()) {
 function getCurrentUri() : string
 {
     return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+}
+
+function getBaseUrl()
+{
+    return "http://" . $_SERVER['HTTP_HOST'];
 }

@@ -1,6 +1,6 @@
 parameters:
   aggregator.default_app: Default # app name to use the aggregator in few apps
-  aggregator.use_jobs_in_aggregation: false # use db queue for aggregation
+  aggregator.use_jobs_in_aggregation: true # use db queue for aggregation
   aggregator.fields: [wt,ct,cpu,mu: mem] # field map to aggregate, KEY - in profiler, VALUE - in aggregator
   aggregator.calls_count_field: ct # the field responses for calls count in this context
   aggregator.field_variations: [percent,min,max] # a list of applied stats functions
@@ -34,15 +34,15 @@ parameters:
 
   # database parameters for profiler data storage
   source_storage.path: /app/db_data/files
-  source_storage.url: sqlite:////app/db_data/sqlite.db
-#  source_storage.url: mysqli://root:db_password@db_mysql:3306/Profiler?charset=utf8
-#  source_storage.url: mysql://root:db_password@db_mysql:3306/Profiler?charset=utf8
-#  source_storage.url: pgsql://db_user:db_password@db_pgsql:5432/Profiler?charset=utf8
+  #  source_storage.url: sqlite:////app/db_data/sqlite.db
+  #  source_storage.url: mysqli://root:db_password@db_mysql:3306/Profiler?charset=utf8
+  source_storage.url: mysql://root:db_password@db_mysql:3306/Profiler?charset=utf8
+  #  source_storage.url: pgsql://db_user:db_password@db_pgsql:5432/Profiler?charset=utf8
 
   # database parameters for aggregator storage
-  aggregator_storage.url: sqlite:////app/db_data/sqlite.db
-#  aggregator_storage.url: mysqli://root:db_password@db_mysql:3306/Profiler?charset=utf8
-#  aggregator_storage.url: mysql://root:db_password@db_mysql:3306/Profiler?charset=utf8
+  # aggregator_storage.url: sqlite:////app/db_data/sqlite.db
+  #  aggregator_storage.url: mysqli://root:db_password@db_mysql:3306/Profiler?charset=utf8
+  aggregator_storage.url: mysql://root:db_password@db_mysql:3306/Profiler?charset=utf8
 #  aggregator_storage.url: pgsql://db_user:db_password@db_pgsql:5432/Profiler?charset=utf8
 
 services:

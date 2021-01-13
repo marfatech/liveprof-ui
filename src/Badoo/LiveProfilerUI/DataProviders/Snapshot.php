@@ -55,13 +55,56 @@ class Snapshot extends Base implements SnapshotInterface
         );
 
         $return = [];
-        if (!empty($snapshots)) {
-            foreach ($snapshots as $snapshot) {
-                $return[] = new \Badoo\LiveProfilerUI\Entity\Snapshot(
-                    $snapshot,
-                    $this->FieldList->getAllFieldsWithVariations()
-                );
+
+        if (empty($snapshots)) {
+            return $return;
+        }
+        $ids = array_column($snapshots, 'id');
+
+
+        if ($ids) {
+            $sql = '
+            select *
+            from (
+                select
+                       ags.id as snapshot_id,
+                       d.id as details_id,
+                       d.timestamp as details_timestamp,
+                       ROW_NUMBER() over (PARTITION BY ags.id ORDER BY d.timestamp desc) AS rownumber
+                from aggregator_snapshots as ags
+                left join details as d on (ags.app = d.app and ags.label = d.label and ags.date = left(d.timestamp, 10))
+                where 1
+                    and ags.id in (' . implode(",", $ids) . ')
+                    and d.timestamp > CURDATE() - INTERVAL 30 DAY
+                order by d.timestamp desc
+                limit 100
+            ) as t where rownumber < 6;
+            ';
+
+            $stmt = $this->AggregatorStorage->query($sql);
+
+            $data = [];
+
+            foreach ($stmt->fetchAll() as $item) {
+                $data[$item['snapshot_id']][] = $item;
             }
+        }
+
+        foreach ($snapshots as $snapshot) {
+
+            $itemList = $data[$snapshot['id']] ?? [];
+            $lastTraces = [];
+
+            foreach ($itemList as $item) {
+                $lastTraces[$item['details_timestamp']] = $item['details_id'];
+            }
+
+            $snapshot['last_traces'] = $lastTraces;
+
+            $return[] = new \Badoo\LiveProfilerUI\Entity\Snapshot(
+                $snapshot,
+                $this->FieldList->getAllFieldsWithVariations()
+            );
         }
 
         return $return;

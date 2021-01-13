@@ -12,6 +12,8 @@ class Snapshot extends BaseEntity
     protected $id = 0;
     /** @var int */
     protected $calls_count = 0;
+    /** @var int[] */
+    protected $last_traces = [];
     /** @var string */
     protected $app = '';
     /** @var string */
@@ -30,6 +32,7 @@ class Snapshot extends BaseEntity
     public function __construct(array $data, array $fields)
     {
         $this->id = isset($data['id']) ? (int)$data['id'] : 0;
+        $this->last_traces = isset($data['last_traces']) ? (array)$data['last_traces'] : [];
         $this->calls_count = isset($data['calls_count']) ? (int)$data['calls_count'] : 0;
         $this->app = isset($data['app']) ? trim($data['app']) : '';
         $this->label = isset($data['label']) ? trim($data['label']) : '';
@@ -85,5 +88,10 @@ class Snapshot extends BaseEntity
     public function getCallsCount() : int
     {
         return $this->calls_count;
+    }
+
+    public function getLastTraces() : array
+    {
+        return $this->last_traces;
     }
 }
