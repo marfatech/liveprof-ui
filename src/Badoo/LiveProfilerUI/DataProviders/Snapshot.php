@@ -77,7 +77,6 @@ class Snapshot extends Base implements SnapshotInterface
                     and ags.id in (' . implode(",", $ids) . ')
                     and d.timestamp > CURDATE() - INTERVAL 30 DAY
                 order by d.timestamp desc
-                limit 100
             ) as t where rownumber < 6;
             ';
 
