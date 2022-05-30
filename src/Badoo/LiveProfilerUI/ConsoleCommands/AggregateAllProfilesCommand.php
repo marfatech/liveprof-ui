@@ -29,7 +29,7 @@ class AggregateAllProfilesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        ini_set('memory_limit', '1G');
+//        ini_set('memory_limit', '1G');
 
         $output->writeln($this->getName() . ' started');
 
