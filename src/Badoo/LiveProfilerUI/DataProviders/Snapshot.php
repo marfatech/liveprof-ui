@@ -72,10 +72,10 @@ class Snapshot extends Base implements SnapshotInterface
                        d.timestamp as details_timestamp,
                        ROW_NUMBER() over (PARTITION BY ags.id ORDER BY d.timestamp desc) AS rownumber
                 from aggregator_snapshots as ags
-                left join details as d on (ags.app = d.app and ags.label = d.label and ags.date = left(d.timestamp, 10))
+                left join details as d on (ags.app = d.app and ags.label = d.label and ags.date = d.date)
                 where 1
                     and ags.id in (' . implode(",", $ids) . ')
-                    and d.timestamp > CURDATE() - INTERVAL 30 DAY
+                    and d.timestamp > CURDATE() - INTERVAL 3 DAY
                 order by d.timestamp desc
             ) as t where rownumber < 6;
             ';
