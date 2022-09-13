@@ -63,9 +63,25 @@ class Snapshot extends Base implements SnapshotInterface
 
 
         if ($ids) {
+//            $sql = '
+//            select *
+//            from (
+//                select
+//                       ags.id as snapshot_id,
+//                       d.id as details_id,
+//                       d.timestamp as details_timestamp,
+//                       ROW_NUMBER() over (PARTITION BY ags.id ORDER BY d.timestamp desc) AS rownumber
+//                from aggregator_snapshots as ags
+//                left join details as d on (ags.app = d.app and ags.label = d.label and ags.date = d.date)
+//                where 1
+//                    and ags.id in (' . implode(",", $ids) . ')
+//                    and d.timestamp > CURDATE() - INTERVAL 3 DAY
+//                order by d.timestamp desc
+//            ) as t where rownumber < 6;
+//            ';
             $sql = '
             with snaps as (
-                select *
+                select MAX(id) as id, app, label, date
                 from aggregator_snapshots
                 where date > CURDATE() - INTERVAL 3 day
                 group by app, label, date
@@ -100,6 +116,8 @@ class Snapshot extends Base implements SnapshotInterface
             foreach ($stmt->fetchAll() as $item) {
                 $data[$item['snapshot_id']][] = $item;
             }
+//            var_dump($data);
+//            exit();
         }
 
         foreach ($snapshots as $snapshot) {
