@@ -83,12 +83,10 @@
                 <td><?= $Snapshot->getApp() ?></td>
                 <td>
                 <?php foreach ($Snapshot->getLastTraces() as $timestamp => $trace) { ?>
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=1000&trace=<?= $trace ?>"><?= $timestamp ?></a> (порог
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=10000&trace=<?= $trace ?>">1</a>,
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=50000&trace=<?= $trace ?>">5</a>
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=150000&trace=<?= $trace ?>">15</a>
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=300000&trace=<?= $trace ?>">30</a>
-                    <a target="_blank" href="/profiler/trace.phtml?threshold=5000000&trace=<?= $trace ?>">50</a>
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=1&trace=<?= $trace ?>"><?= $timestamp ?></a> (порог
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=5&trace=<?= $trace ?>">5</a>
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=10&trace=<?= $trace ?>">10</a>
+                    <a target="_blank" href="/profiler/trace.phtml?threshold=15&trace=<?= $trace ?>">15</a>
                     )
                     <br>
                 <?php } ?>

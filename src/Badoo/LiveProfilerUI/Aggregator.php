@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 
 class Aggregator
 {
-    const SAVE_PORTION_COUNT = 150;
+    const SAVE_PORTION_COUNT = 1000;
 
     /** @var SourceInterface */
     protected $Source;

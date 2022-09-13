@@ -64,20 +64,33 @@ class Snapshot extends Base implements SnapshotInterface
 
         if ($ids) {
             $sql = '
-            select *
-            from (
-                select
-                       ags.id as snapshot_id,
-                       d.id as details_id,
-                       d.timestamp as details_timestamp,
-                       ROW_NUMBER() over (PARTITION BY ags.id ORDER BY d.timestamp desc) AS rownumber
-                from aggregator_snapshots as ags
-                left join details as d on (ags.app = d.app and ags.label = d.label and ags.date = d.date)
-                where 1
-                    and ags.id in (' . implode(",", $ids) . ')
-                    and d.timestamp > CURDATE() - INTERVAL 3 DAY
-                order by d.timestamp desc
-            ) as t where rownumber < 6;
+            with snaps as (
+                select *
+                from aggregator_snapshots
+                where date > CURDATE() - INTERVAL 3 day
+                group by app, label, date
+            ),
+                 dtls as (
+                     select *
+                     from (
+                              select id,
+                                     date,
+                                     app,
+                                     label,
+                                     timestamp,
+                                     ROW_NUMBER() over (partition by date,app,label order by timestamp desc) as rn
+                              from details
+                              where 1
+                                AND date > CURDATE() - INTERVAL 3 day
+                             
+                          ) as t
+                     where t.rn <= 5
+                 )
+            select s.id        as snapshot_id,
+                   d.id        as details_id,
+                   d.timestamp as details_timestamp
+            from snaps as s
+                     left join dtls as d on (s.app = d.app and s.label = d.label and s.date = d.date)
             ';
 
             $stmt = $this->AggregatorStorage->query($sql);

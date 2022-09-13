@@ -319,7 +319,9 @@ class Storage implements StorageInterface
             $this->setLastInsertId((int)$this->Conn->lastInsertId());
             $this->Conn->commit();
         } catch (DBALException $Ex) {
-            throw new DatabaseException('Can\'t insert into ' . $table . ': ' . $Ex->getMessage());
+            if (strpos($Ex->getMessage(), 'Duplicate entry') !== false) {
+                throw new DatabaseException('Can\'t insert into ' . $table . ': ' . $Ex->getMessage());
+            }
         }
 
         return true;
