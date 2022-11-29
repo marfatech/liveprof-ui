@@ -67,7 +67,7 @@ class ProcessAggregatingJobsCommand extends Command
                     $JobStorage->changeStatus($Job->getId(), JobInterface::STATUS_ERROR);
                 }
             }
-            sleep(2);
+            sleep(1);
         }
 
         $output->writeln($this->getName() . ' finished');

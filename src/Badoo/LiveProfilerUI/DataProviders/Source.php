@@ -89,10 +89,9 @@ class Source implements SourceInterface
     {
         $filter = [
             'filter' => [
-                ['timestamp', date('Y-m-d 00:00:00', strtotime('-1 day')), '>'],
+                ['date', date('Y-m-d', strtotime('-1 day')), '>'],
                 ['label', '', '!=']
             ],
-            'group' => ['label'],
             'order' => ['label' => 'asc']
         ];
 
@@ -101,7 +100,7 @@ class Source implements SourceInterface
         }
 
         $labels = $this->SourceStorage->getAll(
-            self::TABLE_NAME,
+            "last_labels",
             ['label'],
             $filter
         );

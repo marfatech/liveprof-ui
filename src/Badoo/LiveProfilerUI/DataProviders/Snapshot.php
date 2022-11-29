@@ -94,7 +94,7 @@ class Snapshot extends Base implements SnapshotInterface
                                      app,
                                      label,
                                      timestamp,
-                                     ROW_NUMBER() over (partition by date,app,label order by timestamp desc) as rn
+                                     ROW_NUMBER() over (partition by app,label order by timestamp desc) as rn
                               from details
                               where 1
                                 AND date > CURDATE() - INTERVAL 3 day
@@ -106,7 +106,7 @@ class Snapshot extends Base implements SnapshotInterface
                    d.id        as details_id,
                    d.timestamp as details_timestamp
             from snaps as s
-                     left join dtls as d on (s.app = d.app and s.label = d.label and s.date = d.date)
+                     left join dtls as d on (s.app = d.app and s.label = d.label)
             ';
 
             $stmt = $this->AggregatorStorage->query($sql);

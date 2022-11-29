@@ -18,6 +18,7 @@ class Table
         'aggregator_method_data',
         'aggregator_metods',
         'aggregator_jobs',
+        'last_labels',
     ];
 
     public static function validate(string $table) : bool
